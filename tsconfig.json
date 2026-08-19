@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "skipLibCheck": true,
+        "noImplicitAny": false,
+        "jsx": "preserve",
+        "types": ["vite/client"],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "resources/js/*"
+            ]
+        }
+    },
+    "include": [
+        "resources/js/**/*",
+        "resources/js/**/*.vue"
+    ]
+}

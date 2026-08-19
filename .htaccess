@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve real files directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Serve real directories directly (except we want to skip this for Laravel routing)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^/laravel-12-boilerplate/public
+    RewriteRule ^ - [L]
+
+    # Forward everything to public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
