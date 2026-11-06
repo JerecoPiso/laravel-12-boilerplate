@@ -8,7 +8,6 @@ use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 use App\Models\User;
 
 trait UserTrait
@@ -19,7 +18,7 @@ trait UserTrait
             $users = $this->userRepo->list([]);
             return api_response($users, true, "Success", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -32,7 +31,7 @@ trait UserTrait
             }
             return api_response($user, true, "Success", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -40,7 +39,6 @@ trait UserTrait
     {
         try {
             $validated = $request->validated();
-            $validated["date_of_birth"] = Carbon::parse($validated["date_of_birth"])->format('Y-m-d');
             $user = $this->userRepo->searchByPid($user_pid);
             if (!$user) {
                 return api_response([], false, "User not found", 404);
@@ -51,7 +49,7 @@ trait UserTrait
             }
             return api_response(["user" => $user], true, "Success", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -74,7 +72,7 @@ trait UserTrait
             }
             return api_response([], false, "Invalid credentials.", 401);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -83,18 +81,13 @@ trait UserTrait
         try {
             $validated = $request->validated();
             $user = User::create([
+                'name' => $validated["name"],
                 'email' => $validated["email"],
-                'firstname' => $validated["firstname"],
-                'lastname' => $validated["lastname"],
-                'middlename' => $validated["middlename"] ?? null,
-                'suffix' => $validated["suffix"] ?? null,
-                'date_of_birth' => Carbon::parse($validated["date_of_birth"])->format('Y-m-d'),
-                'gender' => $validated["gender"],
                 'password' => Hash::make($validated["password"])
             ]);
             return api_response(["user" => $user], true, "Success", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -108,7 +101,7 @@ trait UserTrait
             $data = $this->userRepo->delete($data);
             return api_response([], true, "Success", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 
@@ -120,7 +113,7 @@ trait UserTrait
             $request->session()->regenerateToken();
             return api_response([], true, "Logged out successfully", 200);
         } catch (\Exception $e) {
-            return api_response([], false, $e->getMessage(), $code = $e->getCode() ?: 500);
+            return api_error($e);
         }
     }
 }

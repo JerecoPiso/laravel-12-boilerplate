@@ -23,33 +23,11 @@
                         <InputText type="email" v-model="userInfo.email" placeholder="user@example.com" fluid required class="text-sm" />
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">
-                            First Name <span class="text-red-400">*</span>
-                        </label>
-                        <InputText v-model="userInfo.firstname" placeholder="First name" fluid required class="text-sm" />
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">Middle Name</label>
-                        <InputText v-model="userInfo.middlename" placeholder="Middle name" fluid class="text-sm" />
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">
-                            Last Name <span class="text-red-400">*</span>
-                        </label>
-                        <InputText v-model="userInfo.lastname" placeholder="Last name" fluid required class="text-sm" />
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">Suffix</label>
-                        <InputText v-model="userInfo.suffix" placeholder="e.g. Jr., Sr., III" fluid class="text-sm" />
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">Gender</label>
-                        <Select v-model="userInfo.gender" :options="genders" placeholder="Select gender" fluid class="text-sm" />
-                    </div>
                     <div class="col-span-2 flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-slate-700">Date of Birth</label>
-                        <DatePicker v-model="userInfo.date_of_birth" dateFormat="yy-mm-dd" placeholder="YYYY-MM-DD" fluid class="text-sm" />
+                        <label class="text-sm font-medium text-slate-700">
+                            Name <span class="text-red-400">*</span>
+                        </label>
+                        <InputText v-model="userInfo.name" placeholder="Full name" fluid required class="text-sm" />
                     </div>
                     <div v-if="!isUpdate" class="col-span-2 flex flex-col gap-1.5">
                         <label class="text-sm font-medium text-slate-700">
@@ -124,38 +102,15 @@
                 <template #body="{ data }">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-semibold shrink-0">
-                            {{ data.firstname?.charAt(0)?.toUpperCase() ?? '?' }}
+                            {{ data.name?.charAt(0)?.toUpperCase() ?? '?' }}
                         </div>
                         <div>
                             <p class="text-slate-800 text-sm font-medium leading-tight">
-                                {{ [data.firstname, data.middlename, data.lastname].filter(Boolean).join(' ') }}
-                                <span v-if="data.suffix" class="text-slate-400 font-normal">, {{ data.suffix }}</span>
+                                {{ data.name }}
                             </p>
                             <p class="text-slate-400 text-xs mt-0.5">{{ data.email }}</p>
                         </div>
                     </div>
-                </template>
-            </Column>
-
-            <Column field="gender" header="Gender" class="w-28">
-                <template #body="{ data }">
-                    <span v-if="data.gender"
-                        :class="[
-                            'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border',
-                            data.gender === 'Male'
-                                ? 'bg-blue-50 text-blue-700 border-blue-100'
-                                : 'bg-pink-50 text-pink-700 border-pink-100'
-                        ]"
-                    >
-                        {{ data.gender }}
-                    </span>
-                    <span v-else class="text-slate-300 text-sm italic">—</span>
-                </template>
-            </Column>
-
-            <Column field="date_of_birth" header="Date of Birth" class="w-36">
-                <template #body="{ data }">
-                    <span class="text-slate-500 text-sm">{{ data.date_of_birth ?? '—' }}</span>
                 </template>
             </Column>
 
@@ -192,6 +147,7 @@ import { useUserStore } from '@/store/User';
 import { User } from '@/interface/Interfaces';
 import { useConfirmToast } from '@/composables/confirm';
 import { useAppToast } from "@/composables/toast";
+import { apiErrorMessage } from "@/composables/apiError";
 
 const { showConfirm } = useConfirmToast();
 const toast = useAppToast();
@@ -199,16 +155,10 @@ const userStore = useUserStore();
 const orderModal = ref<boolean>(false);
 const users = computed<User[]>(() => userStore.users);
 const user = computed<User>(() => userStore.user);
-const genders = computed(() => userStore.genders);
 const userInfo = reactive<User>({
     pid: '',
+    name: '',
     email: '',
-    firstname: '',
-    middlename: '',
-    lastname: '',
-    suffix: '',
-    gender: '',
-    date_of_birth: new Date(),
     password: ''
 });
 const isUpdate = ref<boolean>(false);
@@ -220,12 +170,7 @@ watch(
             Object.assign(userInfo, {
                 pid: '',
                 email: '',
-                firstname: '',
-                middlename: '',
-                lastname: '',
-                suffix: '',
-                gender: '',
-                date_of_birth: new Date(),
+                name: '',
                 password: ''
             });
             isUpdate.value = false;
@@ -241,7 +186,7 @@ const read = async () => {
     try {
         await userStore.read();
     } catch (err: any) {
-        toast.error(err.response?.data?.message || "Failed to retrieve Users");
+        toast.error(apiErrorMessage(err, "Failed to retrieve Users"));
     }
 };
 
@@ -251,7 +196,7 @@ const create = async () => {
         toast.success("User created successfully");
         orderModal.value = false;
     } catch (err: any) {
-        toast.error(err.response?.data?.message || "Failed to create User");
+        toast.error(apiErrorMessage(err, "Failed to create User"));
     }
 };
 
@@ -262,7 +207,7 @@ const view = async (pid: string) => {
         isUpdate.value = true;
         orderModal.value = true;
     } catch (err: any) {
-        toast.error(err.response?.data?.message || "Failed to retrieve User");
+        toast.error(apiErrorMessage(err, "Failed to retrieve User"));
     }
 };
 
@@ -272,7 +217,7 @@ const update = async () => {
         toast.success("User updated successfully");
         orderModal.value = false;
     } catch (err: any) {
-        toast.error(err.response?.data?.message || "Failed to update User");
+        toast.error(apiErrorMessage(err, "Failed to update User"));
     }
 };
 
@@ -285,7 +230,7 @@ const archive = async (pid: string) => {
                 await userStore.archive(pid);
                 toast.success("User deleted successfully");
             } catch (err: any) {
-                toast.error(err.response?.data?.message || "Failed to delete User");
+                toast.error(apiErrorMessage(err, "Failed to delete User"));
             }
         },
         onReject: () => {},

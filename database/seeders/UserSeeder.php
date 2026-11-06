@@ -19,12 +19,6 @@ class UserSeeder extends Seeder
             [
                 'pid' => Str::uuid()->toString(),
                 'name' => 'Admin User',
-                'firstname' => 'Admin',
-                'lastname' => 'User',
-                'middlename' => null,
-                'suffix' => null,
-                'gender' => 'Male',
-                'date_of_birth' => '1990-01-01',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
             ]

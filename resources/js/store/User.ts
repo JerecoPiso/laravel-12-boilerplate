@@ -8,16 +8,10 @@ export const useUserStore = defineStore("user", () => {
     const users = ref<User[]>([])
     const user = ref<User>({
         pid: '',
+        name: '',
         email: '',
-        firstname: '',
-        middlename: '',
-        lastname: '',
-        suffix: '',
-        gender: '',
-        date_of_birth: new Date(),
         password: ''
     })
-    const genders = ref(['Male', 'Female'])
     const create = async (data: User) => {
         await axios.post(`${baseUrl}api/user/register`, data);
         read();
@@ -45,7 +39,6 @@ export const useUserStore = defineStore("user", () => {
         view,
         update,
         users,
-        user,
-        genders
+        user
     }
 })

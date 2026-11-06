@@ -24,7 +24,7 @@ class UserRepositories
 
             return $user;
         } catch (\Exception $e) {
-            throw new \Exception("An error has occured! " . $e->getMessage());
+            throw new \Exception("An error has occured! " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -40,7 +40,7 @@ class UserRepositories
 
             return $user;
         } catch (\Exception $e) {
-            throw new \Exception("An error has occured! " . $e->getMessage());
+            throw new \Exception("An error has occured! " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -55,7 +55,7 @@ class UserRepositories
 
             return true;
         } catch (\Exception $e) {
-            throw new \Exception("An error has occured! " . $e->getMessage());
+            throw new \Exception("An error has occured! " . $e->getMessage(), 0, $e);
         }
     }
 }

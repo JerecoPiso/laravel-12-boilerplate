@@ -24,18 +24,9 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $firstname = fake()->firstName();
-        $lastname = fake()->lastName();
-
         return [
             'pid' => Str::uuid()->toString(),
-            'name' => "{$firstname} {$lastname}",
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'middlename' => null,
-            'suffix' => null,
-            'gender' => fake()->randomElement(['Male', 'Female']),
-            'date_of_birth' => fake()->date(),
+            'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

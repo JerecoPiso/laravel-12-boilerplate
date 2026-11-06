@@ -169,8 +169,7 @@ const appName = import.meta.env.VITE_APP_NAME ?? "Laravel 12 Boilerplate";
 const userDisplayName = computed(() => {
   const user: any = auth.user;
   if (!user) return "Guest";
-  if (user.name) return user.name;
-  return [user.firstname, user.lastname].filter(Boolean).join(" ") || "Guest";
+  return user.name || "Guest";
 });
 const userEmail = computed(() => (auth.user as any)?.email || "");
 const userInitials = computed(() => {

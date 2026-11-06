@@ -13,6 +13,6 @@ const auth = useAuthStore();
 const userName = computed(() => {
     const user: any = auth.user;
     if (!user) return "";
-    return user.name || [user.firstname, user.lastname].filter(Boolean).join(" ");
+    return user.name || "";
 });
 </script>

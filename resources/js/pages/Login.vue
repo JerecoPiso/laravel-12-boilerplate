@@ -112,6 +112,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppToast } from "@/composables/toast";
+import { apiErrorMessage } from "@/composables/apiError";
 import axios from "axios";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
@@ -157,7 +158,7 @@ const login = async () => {
       router.push({ name: "Dashboard" });
     }
   } catch (error: any) {
-    const message = error.response?.data?.message || "Unable to sign in";
+    const message = apiErrorMessage(error, "Unable to sign in");
     errorMessage.value = message;
     toast.error(message);
     isLoading.value = false;
